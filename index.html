@@ -25,10 +25,11 @@
 (function(){
   var manifest = {
     name: 'إدارة المتجر',
-    short_name: 'إدارة المتجر',
+    short_name: 'AdVax',
     description: 'لوحة تحكم متجرك الاحترافية',
     start_url: './',
     display: 'standalone',
+    display_override: ['standalone','minimal-ui'],
     orientation: 'portrait-primary',
     background_color: '#060a12',
     theme_color: '#060a12',
@@ -776,7 +777,7 @@ async function pushToGH(msg='✅ تم الحفظ'){
   const url=`https://api.github.com/repos/${GH.user}/${GH.repo}/contents/${GH.path}`;
   try{
     const r=await fetch(url,{method:'PUT',headers:ghH(),body:JSON.stringify({message:'Update products',content:b64,sha})});
-    if(r.ok){const d=await r.json();sha=d.content.sha;renderAll();toast(msg,'success');}
+    if(r.ok){const d=await r.json();sha=d.content.sha;renderAll();toast(msg,'success');fetch(`https://purge.jsdelivr.net/gh/${GH.user}/${GH.repo}@main/${GH.path}`).catch(()=>{});}
     else toast('❌ خطأ أثناء الحفظ','danger');
   }catch{toast('❌ تعذّر الاتصال','danger');}
   loader(false);
