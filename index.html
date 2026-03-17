@@ -767,6 +767,10 @@ async function loadProds(){
   if(r.status===404){prods=[];sha='';}
   else if(r.ok){const d=await r.json();sha=d.sha;prods=JSON.parse(decodeURIComponent(escape(atob(d.content))));}
   else throw new Error();
+  // إصلاح: أي منتج بدون id يأخذ id تلقائي (يحل مشكلة عدم الحذف)
+  let needsMigration=false;
+  prods=prods.map((p,i)=>{if(!p.id){needsMigration=true;return{...p,id:Date.now()+i};}return p;});
+  if(needsMigration)await pushToGH('🔧 ترحيل: تم إضافة IDs للمنتجات');
   document.getElementById('rname').textContent=GH.repo;
   loader(false);renderAll();
 }
